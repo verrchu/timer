@@ -1,1 +1,1 @@
-mod oneshot;
+pub mod oneshot;
