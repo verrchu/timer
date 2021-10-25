@@ -1,0 +1,14 @@
+services:
+  timer-postgres:
+    container_name: timer-postgres
+    build:
+      context: ./df
+      dockerfile: postgres.df
+    networks:
+      - timer
+    ports:
+      - "5555:5432"
+
+networks:
+  timer:
+    driver: bridge
