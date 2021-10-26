@@ -1,6 +1,4 @@
-drop extension if exists "uuid-ossp";
+drop table timer.oneshot_message_progress;
+drop table timer.oneshot_message;
 
-drop table if exists timer.oneshot_message_progress;
-drop table if exists timer.oneshot_message;
-
-drop schema if exists timer;
+drop extension "uuid-ossp";
