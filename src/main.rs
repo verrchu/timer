@@ -2,7 +2,13 @@ mod api;
 mod dao;
 mod domain;
 
+mod config;
+use config::Config;
+mod args;
+use args::Args;
+
 use axum::{Router, Server};
+use structopt::StructOpt;
 use tower::ServiceBuilder;
 use tower_http::trace::TraceLayer;
 
@@ -10,13 +16,14 @@ use tower_http::trace::TraceLayer;
 async fn main() {
     tracing_subscriber::fmt::init();
 
-    tracing::debug!("STARTING");
+    let args = Args::from_args();
+    let config = Config::load(args.config).unwrap();
 
     let app = Router::new()
         .nest("/api", api::router())
         .layer(ServiceBuilder::new().layer(TraceLayer::new_for_http()));
 
-    Server::bind(&"0.0.0.0:3000".parse().unwrap())
+    Server::bind(&config.http.addr)
         .serve(app.into_make_service())
         .await
         .unwrap();

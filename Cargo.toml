@@ -6,8 +6,11 @@ edition = "2021"
 [dependencies]
 axum = "~0.2"
 chrono = { version = "~0.4", features = ["serde"] }
+eyre = "~0.6"
 serde = { version = "~1.0", features = ["derive"] }
-sqlx = { vercion = "~0.5", features = ["postgres", "runtime-tokio-rustls"] }
+serde_yaml = "~0.8"
+sqlx = { version = "~0.5", features = ["postgres", "runtime-tokio-rustls"] }
+structopt = "~0.3"
 tokio = { version = "~1.9", features = ["full"] }
 tower = "~0.4"
 tower-http = { version = "~0.1", features = ["trace"] }
