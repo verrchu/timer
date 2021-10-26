@@ -6,19 +6,19 @@ use uuid::Uuid;
 pub struct OneshotMessage {
     pub message_id: Uuid,
     pub data: String,
-    pub planned_at: DateTime<Utc>,
+    pub scheduled_at: DateTime<Utc>,
 }
 
 mod transform {
     use super::OneshotMessage;
-    use crate::domain::message::oneshot as domain;
+    use crate::domain::message as domain;
 
     impl From<domain::OneshotMessage> for OneshotMessage {
         fn from(input: domain::OneshotMessage) -> Self {
             Self {
                 message_id: input.id,
                 data: input.data,
-                planned_at: input.planned_at,
+                scheduled_at: input.scheduled_at,
             }
         }
     }

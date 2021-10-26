@@ -1,4 +1,6 @@
+pub mod errors;
 mod handlers;
+pub use errors::Error;
 
 use axum::{handler::post, routing::BoxRoute, Router};
 

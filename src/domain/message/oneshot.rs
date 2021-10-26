@@ -6,5 +6,5 @@ use uuid::Uuid;
 pub struct OneshotMessage {
     pub id: Uuid,
     pub data: String,
-    pub planned_at: DateTime<Utc>,
+    pub scheduled_at: DateTime<Utc>,
 }

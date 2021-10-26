@@ -1,1 +1,2 @@
-pub mod oneshot;
+mod oneshot;
+pub use oneshot::OneshotMessage;

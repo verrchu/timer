@@ -1,4 +1,5 @@
 mod api;
+mod dal;
 mod dao;
 mod domain;
 
