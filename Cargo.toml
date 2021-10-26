@@ -9,4 +9,8 @@ chrono = { version = "~0.4", features = ["serde"] }
 serde = { version = "~1.0", features = ["derive"] }
 sqlx = { vercion = "~0.5", features = ["postgres", "runtime-tokio-rustls"] }
 tokio = { version = "~1.9", features = ["full"] }
+tower = "~0.4"
+tower-http = { version = "~0.1", features = ["trace"] }
+tracing = "~0.1"
+tracing-subscriber = { version = "~0.3", features = ["env-filter"] }
 uuid = { version = "~0.8", features = ["serde"] }
