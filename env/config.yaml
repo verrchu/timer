@@ -1,2 +1,4 @@
 http:
   addr: 127.0.0.1:3333
+db:
+  addr: postgres://timer:timer@localhost:5555/timer
