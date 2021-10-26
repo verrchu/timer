@@ -1,7 +1,0 @@
-FROM postgres:14.0
-
-ENV POSTGRES_PASSWORD=timer
-ENV POSTGRES_USER=timer
-ENV POSTGRES_DB=timer
-
-CMD ["postgres"]

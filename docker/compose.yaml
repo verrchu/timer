@@ -2,8 +2,7 @@ services:
   timer-postgres:
     container_name: timer-postgres
     build:
-      context: ./df
-      dockerfile: postgres.df
+      context: ./images/postgres
     networks:
       - timer
     ports:
