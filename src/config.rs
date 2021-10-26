@@ -7,11 +7,17 @@ use serde::{Deserialize, Serialize};
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Config {
     pub http: HttpConfig,
+    pub db: DbConfig,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct HttpConfig {
     pub addr: SocketAddr,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct DbConfig {
+    pub addr: String,
 }
 
 impl Config {
