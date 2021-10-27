@@ -4,10 +4,14 @@ use std::path::PathBuf;
 
 use serde::{Deserialize, Serialize};
 
+use crate::workers;
+
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Config {
     pub http: HttpConfig,
     pub db: DbConfig,
+    #[serde(default)]
+    pub workers: workers::Config,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
