@@ -1,4 +1,4 @@
-mod insert;
+pub mod insert;
 pub use insert::insert;
 
 mod select_unqueued;

@@ -3,9 +3,9 @@
 http POST $ENDPOINT/api/v1/createOneshotMessage << EOF
 {
     "message_id": "$(uuidgen)",
-    "data": "${DATA:=test}",
+    "data": "$DATA",
     "schedule": {
-        "at": "$(date -v +1d -u +"%Y-%m-%dT%H:%M:%SZ")"
+        "at": "$(date -v $DELTA -u +"%Y-%m-%dT%H:%M:%SZ")"
     }
 }
 EOF

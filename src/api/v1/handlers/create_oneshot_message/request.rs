@@ -6,9 +6,9 @@ use crate::domain::message::OneshotMessage;
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Request {
-    message_id: Uuid,
-    data: String,
-    schedule: Schedule,
+    pub message_id: Uuid,
+    pub data: String,
+    pub schedule: Schedule,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]

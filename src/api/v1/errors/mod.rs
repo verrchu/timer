@@ -10,6 +10,21 @@ pub enum Error {
     InternalServerError(InternalServerError),
 }
 
+impl Error {
+    pub fn status_code(&self) -> StatusCode {
+        match self {
+            Self::InternalServerError(_) => StatusCode::INTERNAL_SERVER_ERROR,
+        }
+    }
+}
+
 pub trait ApiError {
     fn status_code() -> StatusCode;
+}
+
+#[derive(Debug, Serialize, Deserialize)]
+#[serde(untagged)]
+pub enum EitherError<E> {
+    Common(Error),
+    Handler(E),
 }
