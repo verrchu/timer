@@ -1,2 +1,2 @@
-mod create_oneshot_message;
-pub use create_oneshot_message::create_oneshot_message;
+mod schedule_oneshot_message;
+pub use schedule_oneshot_message::schedule_oneshot_message;

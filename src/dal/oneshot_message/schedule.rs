@@ -4,7 +4,7 @@ use uuid::Uuid;
 use crate::dao::OneshotMessage;
 
 static MESSAGE_DATA_CONSTRAINT: &str = "oneshot_message_data_nonempty_check";
-static MESSAGE_SCHEDULED_AT_CONSTRAINT: &str = "oneshot_message_schedulaed_at_future_check";
+static MESSAGE_SCHEDULED_AT_CONSTRAINT: &str = "oneshot_message_scheduled_at_future_check";
 
 #[derive(Debug)]
 pub enum QueryError {
@@ -18,10 +18,10 @@ pub enum ConstraintError {
     InvalidMessageScheduleTime,
 }
 
-pub async fn insert(conn: &mut PgConnection, data: &OneshotMessage) -> Result<Uuid, QueryError> {
+pub async fn schedule(conn: &mut PgConnection, data: &OneshotMessage) -> Result<Uuid, QueryError> {
     let result = query(
         r#"
-insert into timer.oneshot_message(
+insert into timer.oneshot_message_schedule(
     message_id, data, scheduled_at
 ) values ($1, $2, $3)
 returning message_id

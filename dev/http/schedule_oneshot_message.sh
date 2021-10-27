@@ -1,6 +1,6 @@
 #!/bin/sh
 
-http POST $ENDPOINT/api/v1/createOneshotMessage << EOF
+http POST $ENDPOINT/api/v1/scheduleOneshotMessage << EOF
 {
     "message_id": "$(uuidgen)",
     "data": "$DATA",

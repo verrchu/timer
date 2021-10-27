@@ -15,11 +15,11 @@ use crate::api::v1::errors::Error as CommonError;
 use crate::api::v1::errors::InternalServerError;
 use crate::dal::{
     self,
-    oneshot_message::insert::{ConstraintError, QueryError},
+    oneshot_message::schedule::{ConstraintError, QueryError},
 };
 use crate::domain;
 
-pub async fn create_oneshot_message(
+pub async fn schedule_oneshot_message(
     Json(request): Json<Request>,
     Extension(db_pool): Extension<PgPool>,
 ) -> Result<Json<Response>, (StatusCode, Json<EitherError<HandlerError>>)> {
@@ -37,7 +37,7 @@ pub async fn create_oneshot_message(
 
     let domain_object: domain::message::OneshotMessage = request.into();
 
-    let message_id = dal::oneshot_message::insert(&mut db_conn, &domain_object.clone().into())
+    let message_id = dal::oneshot_message::schedule(&mut db_conn, &domain_object.clone().into())
         .await
         .map_err(|err| match err {
             QueryError::Generic(inner) => {
