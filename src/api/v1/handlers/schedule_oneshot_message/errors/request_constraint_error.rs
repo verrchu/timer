@@ -5,12 +5,12 @@ use typed_builder::TypedBuilder;
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(untagged)]
 pub enum RequestConstraintError {
-    EmptyMessageData(EmptyMessageData),
+    EmptyMessageContent(EmptyMessageContent),
     InvalidMessageScheduleTime(InvalidMessageScheduleTime),
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, TypedBuilder)]
-pub struct EmptyMessageData {
+pub struct EmptyMessageContent {
     #[builder(setter(into))]
     value: String,
 }
@@ -20,9 +20,9 @@ pub struct InvalidMessageScheduleTime {
     value: DateTime<Utc>,
 }
 
-impl From<EmptyMessageData> for super::Error {
-    fn from(input: EmptyMessageData) -> Self {
-        Self::RequestConstraintError(RequestConstraintError::EmptyMessageData(input))
+impl From<EmptyMessageContent> for super::Error {
+    fn from(input: EmptyMessageContent) -> Self {
+        Self::RequestConstraintError(RequestConstraintError::EmptyMessageContent(input))
     }
 }
 

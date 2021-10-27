@@ -5,7 +5,7 @@ check (
 );
 
 alter table oneshot_message_schedule
-add constraint oneshot_message_data_nonempty_check
+add constraint oneshot_message_nonempty_content_check
 check (
-    char_length(data) > 1
+    char_length(content) > 1
 );

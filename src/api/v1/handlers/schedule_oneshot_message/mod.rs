@@ -53,9 +53,9 @@ pub async fn schedule_oneshot_message(
             }
             QueryError::ConstraintError(inner) => {
                 let handler_error: HandlerError = match inner {
-                    ConstraintError::EmptyMessageData => {
-                        request_constraint_error::EmptyMessageData::builder()
-                            .value(domain_object.data)
+                    ConstraintError::EmptyMessageContent => {
+                        request_constraint_error::EmptyMessageContent::builder()
+                            .value(domain_object.content)
                             .build()
                             .into()
                     }

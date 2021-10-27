@@ -5,6 +5,6 @@ use uuid::Uuid;
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct OneshotMessage {
     pub id: Uuid,
-    pub data: String,
+    pub content: String,
     pub scheduled_at: DateTime<Utc>,
 }

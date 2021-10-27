@@ -8,7 +8,7 @@ begin;
 
   insert into timer.oneshot_message_schedule(
     message_id,
-    data,
+    content,
     scheduled_at
   ) values (
     (select * from id), 'test', now() + interval '1 day'
@@ -44,7 +44,7 @@ begin;
 
   prepare insert_duplicate_message as insert into timer.oneshot_message_schedule(
     message_id,
-    data,
+    content,
     scheduled_at
   ) values (
     (select * from id), 'test', now() + interval '1 day'
@@ -58,7 +58,7 @@ begin;
   );
 
   prepare insert_without_message_id as insert into timer.oneshot_message_schedule(
-    data,
+    content,
     scheduled_at
   ) values (
     'test', now() + interval '1 day'
@@ -71,7 +71,7 @@ begin;
     'insert message without message_id'
   );
 
-  prepare insert_without_data as insert into timer.oneshot_message_schedule(
+  prepare insert_without_content as insert into timer.oneshot_message_schedule(
     message_id,
     scheduled_at
   ) values (
@@ -79,15 +79,15 @@ begin;
   );
 
   SELECT throws_ok(
-    'insert_without_data',
+    'insert_without_content',
     '23502',
-    'null value in column "data" of relation "oneshot_message_schedule" violates not-null constraint',
-    'insert message without data'
+    'null value in column "content" of relation "oneshot_message_schedule" violates not-null constraint',
+    'insert message without content'
   );
 
   prepare insert_without_scheduled_at as insert into timer.oneshot_message_schedule(
     message_id,
-    data
+    content
   ) values (
     (select * from id), 'test'
   );
@@ -101,7 +101,7 @@ begin;
 
   prepare insert_scheduled_at_past as insert into timer.oneshot_message_schedule(
     message_id,
-    data,
+    content,
     scheduled_at
   ) values (
     uuid_generate_v4(), 'test', now() - interval '1 day'
@@ -114,19 +114,19 @@ begin;
     'insert message with scheduled_at in the past'
   );
 
-  prepare insert_empty_data as insert into timer.oneshot_message_schedule(
+  prepare insert_empty_content as insert into timer.oneshot_message_schedule(
     message_id,
-    data,
+    content,
     scheduled_at
   ) values (
     uuid_generate_v4(), '', now() + interval '1 day'
   );
 
   SELECT throws_ok(
-    'insert_empty_data',
+    'insert_empty_content',
     '23514',
-    'new row for relation "oneshot_message_schedule" violates check constraint "oneshot_message_data_nonempty_check"',
-    'insert message with scheduled_at in the past'
+    'new row for relation "oneshot_message_schedule" violates check constraint "oneshot_message_nonempty_content_check"',
+    'insert message with empty content'
   );
 
   select * from finish();
