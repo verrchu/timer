@@ -8,7 +8,7 @@ pub async fn insert(conn: &mut PgConnection, data: &OneshotMessage) -> eyre::Res
         r#"
 insert into timer.oneshot_message(
     message_id, data, scheduled_at
-) values (?, ?, ?)
+) values ($1, $2, $3)
 returning message_id
 "#,
     )
