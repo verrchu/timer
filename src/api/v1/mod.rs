@@ -10,5 +10,6 @@ pub fn router() -> Router<BoxRoute> {
             "/scheduleOneshotMessage",
             post(handlers::schedule_oneshot_message),
         )
+        .route("/registerUser", post(handlers::register_user))
         .boxed()
 }

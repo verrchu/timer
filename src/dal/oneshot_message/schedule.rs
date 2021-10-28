@@ -22,7 +22,7 @@ pub enum ConstraintError {
 
 pub async fn schedule(
     conn: &mut PgConnection,
-    message: &OneshotMessage,
+    message: OneshotMessage,
 ) -> Result<Uuid, QueryError> {
     let result = query(
         r#"

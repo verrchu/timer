@@ -8,20 +8,18 @@ mod response;
 pub use response::Response;
 mod errors;
 
-use errors::{
-    request_constraint_error, user_does_not_exist::UserDoesNotExist, Error as HandlerError,
-};
+use errors::{user_already_registered::UserAlreadyRegistered, Error as HandlerError};
 
 use crate::api::v1::errors::EitherError;
 use crate::api::v1::errors::Error as CommonError;
 use crate::api::v1::errors::InternalServerError;
 use crate::dal::{
     self,
-    oneshot_message::schedule::{ConstraintError, QueryError},
+    user::register::{ConstraintError, QueryError},
 };
 use crate::domain;
 
-pub async fn schedule_oneshot_message(
+pub async fn register_user(
     Json(request): Json<Request>,
     Extension(db_pool): Extension<PgPool>,
 ) -> Result<Json<Response>, (StatusCode, Json<EitherError<HandlerError>>)> {
@@ -37,9 +35,9 @@ pub async fn schedule_oneshot_message(
         )
     })?;
 
-    let domain_object: domain::message::OneshotMessage = request.into();
+    let domain_object: domain::user::User = request.into();
 
-    let message_id = dal::oneshot_message::schedule(&mut db_conn, domain_object.clone().into())
+    let user_id = dal::user::register(&mut db_conn, domain_object.clone().into())
         .await
         .map_err(|err| match err {
             QueryError::Generic(inner) => {
@@ -55,19 +53,7 @@ pub async fn schedule_oneshot_message(
             }
             QueryError::ConstraintError(inner) => {
                 let handler_error: HandlerError = match inner {
-                    ConstraintError::EmptyMessageContent => {
-                        request_constraint_error::EmptyMessageContent::builder()
-                            .value(domain_object.content)
-                            .build()
-                            .into()
-                    }
-                    ConstraintError::InvalidMessageScheduleTime => {
-                        request_constraint_error::InvalidMessageScheduleTime::builder()
-                            .value(domain_object.scheduled_at)
-                            .build()
-                            .into()
-                    }
-                    ConstraintError::UserDoesNotExist => UserDoesNotExist::builder()
+                    ConstraintError::UserAlreadyRegistered => UserAlreadyRegistered::builder()
                         .user_id(domain_object.user_id.0)
                         .build()
                         .into(),
@@ -80,5 +66,5 @@ pub async fn schedule_oneshot_message(
             }
         })?;
 
-    Ok(Json(Response::builder().message_id(message_id).build()))
+    Ok(Json(Response::builder().user_id(user_id).build()))
 }
