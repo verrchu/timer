@@ -5,6 +5,7 @@ use uuid::Uuid;
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct OneshotMessage {
     pub message_id: Uuid,
+    pub user_id: Uuid,
     pub content: String,
     pub scheduled_at: DateTime<Utc>,
 }
@@ -16,7 +17,8 @@ mod transform {
     impl From<domain::OneshotMessage> for OneshotMessage {
         fn from(input: domain::OneshotMessage) -> Self {
             Self {
-                message_id: input.id,
+                message_id: input.message_id.0,
+                user_id: input.user_id.0,
                 content: input.content,
                 scheduled_at: input.scheduled_at,
             }

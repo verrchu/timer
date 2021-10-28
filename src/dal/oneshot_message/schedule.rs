@@ -5,6 +5,7 @@ use crate::dao::OneshotMessage;
 
 static MESSAGE_CONTENT_CONSTRAINT: &str = "oneshot_message_nonempty_content_check";
 static MESSAGE_SCHEDULED_AT_CONSTRAINT: &str = "oneshot_message_scheduled_at_future_check";
+static MESSAGE_USER_ID_CONSTRAINT: &str = "oneshot_message_schedule_user_id";
 
 #[derive(Debug)]
 pub enum QueryError {
@@ -16,6 +17,7 @@ pub enum QueryError {
 pub enum ConstraintError {
     EmptyMessageContent,
     InvalidMessageScheduleTime,
+    UserDoesNotExist,
 }
 
 pub async fn schedule(
@@ -25,12 +27,13 @@ pub async fn schedule(
     let result = query(
         r#"
 insert into timer.oneshot_message_schedule(
-    message_id, content, scheduled_at
-) values ($1, $2, $3)
+    message_id, user_id, content, scheduled_at
+) values ($1, $2, $3, $4)
 returning message_id
 "#,
     )
     .bind(&message.message_id)
+    .bind(&message.user_id)
     .bind(&message.content)
     .bind(&message.scheduled_at)
     .fetch_one(conn)
@@ -48,6 +51,10 @@ returning message_id
                 } else if constraint == MESSAGE_SCHEDULED_AT_CONSTRAINT {
                     Err(QueryError::ConstraintError(
                         ConstraintError::InvalidMessageScheduleTime,
+                    ))
+                } else if constraint == MESSAGE_USER_ID_CONSTRAINT {
+                    Err(QueryError::ConstraintError(
+                        ConstraintError::UserDoesNotExist,
                     ))
                 } else {
                     Err(Error::Database(inner))

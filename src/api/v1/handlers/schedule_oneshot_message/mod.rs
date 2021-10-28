@@ -8,7 +8,9 @@ mod response;
 pub use response::Response;
 mod errors;
 
-use errors::{request_constraint_error, Error as HandlerError};
+use errors::{
+    request_constraint_error, user_does_not_exist::UserDoesNotExist, Error as HandlerError,
+};
 
 use crate::api::v1::errors::EitherError;
 use crate::api::v1::errors::Error as CommonError;
@@ -65,6 +67,10 @@ pub async fn schedule_oneshot_message(
                             .build()
                             .into()
                     }
+                    ConstraintError::UserDoesNotExist => UserDoesNotExist::builder()
+                        .user_id(domain_object.user_id.0)
+                        .build()
+                        .into(),
                 };
 
                 (

@@ -1,6 +1,9 @@
 pub mod request_constraint_error;
 pub use request_constraint_error::RequestConstraintError;
 
+pub mod user_does_not_exist;
+pub use user_does_not_exist::UserDoesNotExist;
+
 use http::StatusCode;
 use serde::{Deserialize, Serialize};
 
@@ -8,12 +11,11 @@ use serde::{Deserialize, Serialize};
 #[serde(tag = "code", content = "context", rename_all = "SCREAMING_SNAKE_CASE")]
 pub enum Error {
     RequestConstraintError(RequestConstraintError),
+    UserDoesNotExist(UserDoesNotExist),
 }
 
 impl Error {
     pub fn status_code(&self) -> StatusCode {
-        match self {
-            Self::RequestConstraintError(_) => StatusCode::BAD_REQUEST,
-        }
+        StatusCode::UNPROCESSABLE_ENTITY
     }
 }
