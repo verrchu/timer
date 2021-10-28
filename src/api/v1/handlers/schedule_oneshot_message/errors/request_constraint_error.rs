@@ -3,7 +3,7 @@ use serde::{Deserialize, Serialize};
 use typed_builder::TypedBuilder;
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
-#[serde(untagged)]
+#[serde(tag = "reason", rename_all = "SCREAMING_SNAKE_CASE")]
 pub enum RequestConstraintError {
     EmptyMessageContent(EmptyMessageContent),
     InvalidMessageScheduleTime(InvalidMessageScheduleTime),
