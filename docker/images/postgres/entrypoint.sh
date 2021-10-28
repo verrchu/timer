@@ -9,8 +9,8 @@ install_pgtap() {
 
   echo "Installing pgTAP"
   cd /pgtap && make install && make installcheck
+  psql -d $POSTGRES_DB -c "create extension if not exists pgtap"
 }
 
 install_pgtap &
 docker-entrypoint.sh postgres
-

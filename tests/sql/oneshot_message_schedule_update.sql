@@ -1,5 +1,3 @@
-create extension if not exists pgtap;
-
 -- this test unfortunately cannot be run in scope of a single transation
 -- becaus for some reason trigger for updated_at has no effect in that case
 -- therefore some effects are commited to db and the manually cleaned up

@@ -1,5 +1,3 @@
-create extension if not exists pgtap;
-
 begin;
   select uuid_generate_v4() into id;
   select now() into start;
