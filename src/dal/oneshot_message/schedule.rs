@@ -3,6 +3,7 @@ use uuid::Uuid;
 
 use crate::dao::OneshotMessage;
 
+static MESSAGE_UNIQUE_CONSTRAINT: &str = "oneshot_message_schedule_pkey";
 static MESSAGE_CONTENT_CONSTRAINT: &str = "oneshot_message_nonempty_content_check";
 static MESSAGE_SCHEDULED_AT_CONSTRAINT: &str = "oneshot_message_scheduled_at_future_check";
 static MESSAGE_USER_ID_CONSTRAINT: &str = "oneshot_message_schedule_user_id";
@@ -18,6 +19,7 @@ pub enum ConstraintError {
     EmptyMessageContent,
     InvalidMessageScheduleTime,
     UserDoesNotExist,
+    MessageAlreadyScheduled,
 }
 
 pub async fn schedule(
@@ -55,6 +57,10 @@ returning message_id
                 } else if constraint == MESSAGE_USER_ID_CONSTRAINT {
                     Err(QueryError::ConstraintError(
                         ConstraintError::UserDoesNotExist,
+                    ))
+                } else if constraint == MESSAGE_UNIQUE_CONSTRAINT {
+                    Err(QueryError::ConstraintError(
+                        ConstraintError::MessageAlreadyScheduled,
                     ))
                 } else {
                     Err(Error::Database(inner))

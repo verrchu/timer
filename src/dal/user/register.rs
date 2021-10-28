@@ -3,7 +3,7 @@ use uuid::Uuid;
 
 use crate::dao::User;
 
-static USER_UNIQUE_CONTRAINT: &str = "oneshot_message_nonempty_content_check";
+static USER_UNIQUE_CONTRAINT: &str = "user_pkey";
 
 #[derive(Debug)]
 pub enum QueryError {

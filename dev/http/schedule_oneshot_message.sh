@@ -2,11 +2,11 @@
 
 http POST $ENDPOINT/api/v1/scheduleOneshotMessage << EOF
 {
-    "message_id": "$(uuidgen)",
-    "user_id": "$(uuidgen)",
-    "content": "$CONTENT",
+    "message_id": "${MESSAGE_ID:-$(uuidgen)}",
+    "user_id": "${USER_ID:-$(uuidgen)}",
+    "content": "${CONTENT:-test}",
     "schedule": {
-        "at": "$(date -v $DELTA -u +"%Y-%m-%dT%H:%M:%SZ")"
+        "at": "$(date -v ${DELTA:-+1d} -u +"%Y-%m-%dT%H:%M:%SZ")"
     }
 }
 EOF

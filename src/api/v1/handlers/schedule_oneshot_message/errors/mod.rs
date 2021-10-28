@@ -4,6 +4,9 @@ pub use request_constraint_error::RequestConstraintError;
 pub mod user_does_not_exist;
 pub use user_does_not_exist::UserDoesNotExist;
 
+pub mod message_already_scheduled;
+pub use message_already_scheduled::MessageAlreadyScheduled;
+
 use http::StatusCode;
 use serde::{Deserialize, Serialize};
 
@@ -12,6 +15,7 @@ use serde::{Deserialize, Serialize};
 pub enum Error {
     RequestConstraintError(RequestConstraintError),
     UserDoesNotExist(UserDoesNotExist),
+    MessageAlreadyScheduled(MessageAlreadyScheduled),
 }
 
 impl Error {

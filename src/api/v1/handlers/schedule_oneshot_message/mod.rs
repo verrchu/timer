@@ -9,7 +9,8 @@ pub use response::Response;
 mod errors;
 
 use errors::{
-    request_constraint_error, user_does_not_exist::UserDoesNotExist, Error as HandlerError,
+    message_already_scheduled::MessageAlreadyScheduled, request_constraint_error,
+    user_does_not_exist::UserDoesNotExist, Error as HandlerError,
 };
 
 use crate::api::v1::errors::EitherError;
@@ -68,6 +69,10 @@ pub async fn schedule_oneshot_message(
                             .into()
                     }
                     ConstraintError::UserDoesNotExist => UserDoesNotExist::builder()
+                        .user_id(domain_object.user_id.0)
+                        .build()
+                        .into(),
+                    ConstraintError::MessageAlreadyScheduled => MessageAlreadyScheduled::builder()
                         .user_id(domain_object.user_id.0)
                         .build()
                         .into(),
