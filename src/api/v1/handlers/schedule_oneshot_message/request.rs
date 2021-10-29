@@ -1,4 +1,4 @@
-use chrono::{DateTime, Utc};
+use chrono::{DateTime, Duration, Utc};
 use serde::{Deserialize, Serialize};
 use uuid::Uuid;
 
@@ -12,21 +12,28 @@ pub struct Request {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
-#[serde(untagged)]
+#[serde(rename_all = "lowercase")]
 pub enum Schedule {
-    At { at: DateTime<Utc> },
+    At(DateTime<Utc>),
+    In(u64),
 }
 
-impl From<Request> for OneshotMessage {
-    fn from(input: Request) -> Self {
+impl TryFrom<Request> for OneshotMessage {
+    type Error = eyre::Report;
+
+    fn try_from(input: Request) -> eyre::Result<Self> {
         let scheduled_at = match input.schedule {
-            Schedule::At { at } => at,
+            Schedule::At(timestamp) => timestamp,
+            Schedule::In(seconds) => {
+                let seconds = i64::try_from(seconds).map_err(Into::<eyre::Report>::into)?;
+                Utc::now() + Duration::seconds(seconds)
+            }
         };
 
-        Self {
+        Ok(Self {
             user_id: input.user_id.into(),
             content: input.content,
             scheduled_at,
-        }
+        })
     }
 }

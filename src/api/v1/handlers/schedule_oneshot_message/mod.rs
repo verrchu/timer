@@ -9,7 +9,7 @@ pub use response::Response;
 mod errors;
 
 use errors::{
-    message_already_scheduled::MessageAlreadyScheduled, request_constraint_error,
+    message_already_scheduled::MessageAlreadyScheduled, request_constraint_violation,
     user_does_not_exist::UserDoesNotExist, Error as HandlerError,
 };
 
@@ -38,9 +38,22 @@ pub async fn schedule_oneshot_message(
         )
     })?;
 
-    let domain_object: domain::message::OneshotMessage = request.into();
+    let domain_object: domain::message::OneshotMessage = request.try_into().map_err(|err| {
+        let common_error: CommonError = InternalServerError::builder()
+            .reason(format!(
+                "Failed to trnsform request to internal structure: {:?}",
+                err
+            ))
+            .build()
+            .into();
 
-    let message_id = dal::oneshot_message::schedule(&mut db_conn, domain_object.clone().into())
+        (
+            common_error.status_code(),
+            Json(EitherError::Common(common_error)),
+        )
+    })?;
+
+    let db_response = dal::oneshot_message::schedule(&mut db_conn, domain_object.clone().into())
         .await
         .map_err(|err| match err {
             QueryError::Generic(inner) => {
@@ -57,13 +70,13 @@ pub async fn schedule_oneshot_message(
             QueryError::ConstraintError(inner) => {
                 let handler_error: HandlerError = match inner {
                     ConstraintError::EmptyMessageContent => {
-                        request_constraint_error::EmptyMessageContent::builder()
+                        request_constraint_violation::EmptyMessageContent::builder()
                             .value(domain_object.content)
                             .build()
                             .into()
                     }
                     ConstraintError::InvalidMessageScheduleTime => {
-                        request_constraint_error::InvalidMessageScheduleTime::builder()
+                        request_constraint_violation::InvalidMessageScheduleTime::builder()
                             .value(domain_object.scheduled_at)
                             .build()
                             .into()
@@ -85,5 +98,10 @@ pub async fn schedule_oneshot_message(
             }
         })?;
 
-    Ok(Json(Response::builder().message_id(message_id).build()))
+    Ok(Json(
+        Response::builder()
+            .message_id(db_response.message_id)
+            .scheduled_at(db_response.scheduled_at)
+            .build(),
+    ))
 }

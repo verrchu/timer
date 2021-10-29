@@ -4,7 +4,7 @@ use typed_builder::TypedBuilder;
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(tag = "reason", rename_all = "SCREAMING_SNAKE_CASE")]
-pub enum RequestConstraintError {
+pub enum RequestConstraintViolation {
     EmptyMessageContent(EmptyMessageContent),
     InvalidMessageScheduleTime(InvalidMessageScheduleTime),
 }
@@ -22,12 +22,14 @@ pub struct InvalidMessageScheduleTime {
 
 impl From<EmptyMessageContent> for super::Error {
     fn from(input: EmptyMessageContent) -> Self {
-        Self::RequestConstraintError(RequestConstraintError::EmptyMessageContent(input))
+        Self::RequestConstraintViolation(RequestConstraintViolation::EmptyMessageContent(input))
     }
 }
 
 impl From<InvalidMessageScheduleTime> for super::Error {
     fn from(input: InvalidMessageScheduleTime) -> Self {
-        Self::RequestConstraintError(RequestConstraintError::InvalidMessageScheduleTime(input))
+        Self::RequestConstraintViolation(RequestConstraintViolation::InvalidMessageScheduleTime(
+            input,
+        ))
     }
 }

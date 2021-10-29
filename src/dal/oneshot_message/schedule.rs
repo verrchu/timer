@@ -1,3 +1,4 @@
+use chrono::{DateTime, Utc};
 use sqlx::{query, Error, PgConnection, Row};
 use uuid::Uuid;
 
@@ -22,16 +23,22 @@ pub enum ConstraintError {
     MessageAlreadyScheduled,
 }
 
+#[derive(Debug, Clone)]
+pub struct Response {
+    pub message_id: Uuid,
+    pub scheduled_at: DateTime<Utc>,
+}
+
 pub async fn schedule(
     conn: &mut PgConnection,
     message: OneshotMessage,
-) -> Result<Uuid, QueryError> {
+) -> Result<Response, QueryError> {
     let result = query(
         r#"
 insert into timer.oneshot_message_schedule(
     user_id, content, scheduled_at
 ) values ($1, $2, $3)
-returning message_id
+returning message_id, scheduled_at
 "#,
     )
     .bind(&message.user_id)
@@ -39,10 +46,13 @@ returning message_id
     .bind(&message.scheduled_at)
     .fetch_one(conn)
     .await
-    .map(|row| row.get("message_id"));
+    .map(|row| Response {
+        message_id: row.get("message_id"),
+        scheduled_at: row.get("scheduled_at"),
+    });
 
     match result {
-        Ok(message_id) => Ok(message_id),
+        Ok(response) => Ok(response),
         Err(Error::Database(inner)) => {
             if let Some(constraint) = inner.constraint() {
                 if constraint == MESSAGE_CONTENT_CONSTRAINT {

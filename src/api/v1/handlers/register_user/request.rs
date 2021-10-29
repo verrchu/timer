@@ -1,5 +1,4 @@
 use serde::{Deserialize, Serialize};
-use uuid::Uuid;
 
 use crate::domain::user::User;
 
@@ -10,8 +9,6 @@ pub struct Request {
 
 impl From<Request> for User {
     fn from(input: Request) -> Self {
-        Self {
-            alias: input.alias.into(),
-        }
+        Self { alias: input.alias }
     }
 }
