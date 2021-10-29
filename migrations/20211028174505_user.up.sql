@@ -1,5 +1,6 @@
 create table if not exists timer.user(
-    user_id uuid primary key,
+    user_id uuid primary key default uuid_generate_v4(),
+    alias text not null unique,
     created_at timestamp with time zone not null default now(),
     updated_at timestamp with time zone not null default now()
 );

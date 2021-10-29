@@ -1,22 +1,27 @@
 -- this test unfortunately cannot be run in scope of a single transation
 -- becaus for some reason trigger for updated_at has no effect in that case
 -- therefore some effects are commited to db and the manually cleaned up
-select uuid_generate_v4() into tmp_message_id;
-select uuid_generate_v4() into tmp_user_id;
+insert into timer.user(alias)
+values (('alias'));
 
-insert into timer.user(user_id)
-values ((select * from tmp_user_id));
+select user_id into tmp_user_id
+from timer.user where alias = 'alias';
 
+-- TODO: would be nice to save id of created message
+-- directly form returning clause
 insert into timer.oneshot_message_schedule(
-  message_id,
   user_id,
   content,
   scheduled_at
 ) values (
-  (select * from tmp_message_id),
   (select * from tmp_user_id),
-  'test', now() + interval '1 day'
+  'test',
+  now() + interval '1 day'
 );
+
+select message_id into tmp_message_id
+from timer.oneshot_message_schedule
+where user_id = (select * from tmp_user_id);
 
 select updated_at into first_updated_at
 from timer.oneshot_message_schedule

@@ -1,86 +1,61 @@
 begin;
-  select uuid_generate_v4() into tmp_message_id;
-  select uuid_generate_v4() into tmp_user_id;
   select now() into start;
 
-  insert into timer.user(user_id)
-  values ((select * from tmp_user_id));
+  insert into timer.user(alias)
+  values (('alias'));
 
-  select plan(15);
+  select user_id into tmp_user_id
+  from timer.user where alias = 'alias';
 
+  select plan(14);
+
+  -- TODO: would be nice to save id of created message
+  -- directly form returning clause
   insert into timer.oneshot_message_schedule(
-    message_id,
     user_id,
     content,
     scheduled_at
   ) values (
-    (select * from tmp_message_id),
     (select * from tmp_user_id),
-    'test', now() + interval '1 day'
+    'test',
+    now() + interval '1 day'
   );
+
+  select message_id into tmp_message_id
+  from timer.oneshot_message_schedule
+  where user_id = (select * from tmp_user_id);
 
   select is(count(*)::integer, 1::integer, 'message inserted')
   from timer.oneshot_message_schedule
-  where message_id::text = (select * from tmp_message_id)::text;
+  where message_id = (select * from tmp_message_id);
 
-  select isnt(created_at, NULL, 'created_at autpmatically populated')
+  select isnt(message_id, NULL, 'message_id automatically populated')
   from timer.oneshot_message_schedule
-  where message_id::text = (select * from tmp_message_id)::text;
+  where message_id = (select * from tmp_message_id);
+
+  select isnt(created_at, NULL, 'created_at automatically populated')
+  from timer.oneshot_message_schedule
+  where message_id = (select * from tmp_message_id);
 
   select cmp_ok((select * from start), '<=', created_at, 'created_at >= test start time')
   from timer.oneshot_message_schedule
-  where message_id::text = (select * from tmp_message_id)::text;
+  where message_id = (select * from tmp_message_id);
 
   select cmp_ok(now(), '>=', created_at, 'created_at <= test execution time')
   from timer.oneshot_message_schedule
-  where message_id::text = (select * from tmp_message_id)::text;
+  where message_id = (select * from tmp_message_id);
 
   select isnt(updated_at, NULL, 'updated_at automatically populated')
   from timer.oneshot_message_schedule
-  where message_id::text = (select * from tmp_message_id)::text;
+  where message_id = (select * from tmp_message_id);
 
   select cmp_ok((select * from start), '<=', updated_at, 'created_at >= test start time')
   from timer.oneshot_message_schedule
-  where message_id::text = (select * from tmp_message_id)::text;
+  where message_id = (select * from tmp_message_id);
 
   select cmp_ok(now(), '>=', updated_at, 'created_at <= test execution time')
   from timer.oneshot_message_schedule
-  where message_id::text = (select * from tmp_message_id)::text;
-
-  prepare insert_duplicate_message as insert into timer.oneshot_message_schedule(
-    message_id,
-    user_id,
-    content,
-    scheduled_at
-  ) values (
-    (select * from tmp_message_id),
-    (select * from tmp_user_id),
-    'test', now() + interval '1 day'
-  );
-
-  SELECT throws_ok(
-    'insert_duplicate_message',
-    '23505',
-    'duplicate key value violates unique constraint "oneshot_message_schedule_pkey"',
-    'insert message with duplicate message_id'
-  );
-
-  prepare insert_without_message_id as insert into timer.oneshot_message_schedule(
-    user_id,
-    content,
-    scheduled_at
-  ) values (
-    (select * from tmp_user_id),
-    'test', now() + interval '1 day'
-  );
-
-  SELECT throws_ok(
-    'insert_without_message_id',
-    '23502',
-    'null value in column "message_id" of relation '
-    '"oneshot_message_schedule" violates not-null constraint',
-    'insert message without message_id'
-  );
+  where message_id = (select * from tmp_message_id);
 
   prepare insert_without_user_id as insert into timer.oneshot_message_schedule(
     message_id,
@@ -99,11 +74,9 @@ begin;
   );
 
   prepare insert_without_content as insert into timer.oneshot_message_schedule(
-    message_id,
     user_id,
     scheduled_at
   ) values (
-    uuid_generate_v4(),
     (select * from tmp_user_id),
     now() + interval '1 day'
   );
@@ -117,11 +90,9 @@ begin;
   );
 
   prepare insert_without_scheduled_at as insert into timer.oneshot_message_schedule(
-    message_id,
     user_id,
     content
   ) values (
-    uuid_generate_v4(),
     (select * from tmp_user_id),
     'test'
   );
