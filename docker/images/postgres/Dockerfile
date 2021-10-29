@@ -1,4 +1,4 @@
-FROM postgres:14.0
+FROM postgres:latest
 
 ENV POSTGRES_PASSWORD=timer
 ENV POSTGRES_USER=timer
