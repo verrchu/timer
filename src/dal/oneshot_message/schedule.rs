@@ -29,12 +29,11 @@ pub async fn schedule(
     let result = query(
         r#"
 insert into timer.oneshot_message_schedule(
-    message_id, user_id, content, scheduled_at
-) values ($1, $2, $3, $4)
+    user_id, content, scheduled_at
+) values ($1, $2, $3)
 returning message_id
 "#,
     )
-    .bind(&message.message_id)
     .bind(&message.user_id)
     .bind(&message.content)
     .bind(&message.scheduled_at)

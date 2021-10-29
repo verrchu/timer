@@ -6,7 +6,6 @@ use crate::domain::message::OneshotMessage;
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Request {
-    pub message_id: Uuid,
     pub user_id: Uuid,
     pub content: String,
     pub schedule: Schedule,
@@ -25,7 +24,6 @@ impl From<Request> for OneshotMessage {
         };
 
         Self {
-            message_id: input.message_id.into(),
             user_id: input.user_id.into(),
             content: input.content,
             scheduled_at,

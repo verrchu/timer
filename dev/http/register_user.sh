@@ -2,6 +2,6 @@
 
 http POST $ENDPOINT/api/v1/registerUser << EOF
 {
-    "user_id": "${USER_ID:-$(uuidgen)}"
+    "alias": "$ALIAS"
 }
 EOF

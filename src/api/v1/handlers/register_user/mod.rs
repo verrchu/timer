@@ -8,7 +8,7 @@ mod response;
 pub use response::Response;
 mod errors;
 
-use errors::{user_already_registered::UserAlreadyRegistered, Error as HandlerError};
+use errors::{user_alias_already_taken::UserAliasAlreadyTaken, Error as HandlerError};
 
 use crate::api::v1::errors::EitherError;
 use crate::api::v1::errors::Error as CommonError;
@@ -53,8 +53,8 @@ pub async fn register_user(
             }
             QueryError::ConstraintError(inner) => {
                 let handler_error: HandlerError = match inner {
-                    ConstraintError::UserAlreadyRegistered => UserAlreadyRegistered::builder()
-                        .user_id(domain_object.user_id.0)
+                    ConstraintError::UserAliasAlreadyTaken => UserAliasAlreadyTaken::builder()
+                        .alias(domain_object.alias)
                         .build()
                         .into(),
                 };

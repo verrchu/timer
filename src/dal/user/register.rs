@@ -3,7 +3,7 @@ use uuid::Uuid;
 
 use crate::dao::User;
 
-static USER_UNIQUE_CONTRAINT: &str = "user_pkey";
+static USER_ALIAS_UNIQUE_CONTRAINT: &str = "user_alias_key";
 
 #[derive(Debug)]
 pub enum QueryError {
@@ -13,16 +13,16 @@ pub enum QueryError {
 
 #[derive(Debug)]
 pub enum ConstraintError {
-    UserAlreadyRegistered,
+    UserAliasAlreadyTaken,
 }
 
-pub async fn register(conn: &mut PgConnection, message: User) -> Result<Uuid, QueryError> {
+pub async fn register(conn: &mut PgConnection, user: User) -> Result<Uuid, QueryError> {
     let result = query(
         r#"
-insert into timer.user(user_id) values ($1) returning user_id
+insert into timer.user(alias) values ($1) returning user_id
 "#,
     )
-    .bind(message.user_id)
+    .bind(user.alias)
     .fetch_one(conn)
     .await
     .map(|row| row.get("user_id"));
@@ -31,9 +31,9 @@ insert into timer.user(user_id) values ($1) returning user_id
         Ok(message_id) => Ok(message_id),
         Err(Error::Database(inner)) => {
             if let Some(constraint) = inner.constraint() {
-                if constraint == USER_UNIQUE_CONTRAINT {
+                if constraint == USER_ALIAS_UNIQUE_CONTRAINT {
                     Err(QueryError::ConstraintError(
-                        ConstraintError::UserAlreadyRegistered,
+                        ConstraintError::UserAliasAlreadyTaken,
                     ))
                 } else {
                     Err(Error::Database(inner))

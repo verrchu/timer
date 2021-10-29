@@ -3,7 +3,7 @@ use uuid::Uuid;
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct User {
-    pub user_id: UserId,
+    pub alias: String,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
