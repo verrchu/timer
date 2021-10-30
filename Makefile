@@ -1,7 +1,8 @@
 TEST_SQL_PATH ?= tests/sql/*.sql
+DB_PORT ?= 25432
 
 test_sql:
-	@ pg_prove -U timer -h localhost -p 5555 -d timer $(TEST_SQL_PATH)
+	@ pg_prove -U timer -h localhost -p $(DB_PORT) -d timer $(TEST_SQL_PATH)
 
 docker_start:
 	@ docker compose up -d
