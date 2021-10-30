@@ -11,7 +11,7 @@ create table if not exists timer.oneshot_message_schedule(
 );
 
 create table if not exists timer.oneshot_message_progress(
-    message_id uuid not null references timer.oneshot_message_schedule,
+    message_id uuid unique not null references timer.oneshot_message_schedule,
     queued_at timestamp with time zone not null,
     processed_at timestamp with time zone
 );

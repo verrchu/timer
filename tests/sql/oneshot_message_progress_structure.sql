@@ -1,10 +1,24 @@
-select plan(12);
+select plan(14);
 
 select columns_are(
     'timer',
     'oneshot_message_progress',
     array['message_id', 'queued_at', 'processed_at'],
     'check timer.oneshot_message_progress table columns'
+);
+
+select indexes_are(
+    'timer',
+    'oneshot_message_progress',
+    array['oneshot_message_progress_message_id_key'],
+    'check timer.oneshot_message_progress table indexes'
+);
+
+select triggers_are(
+    'timer',
+    'oneshot_message_progress',
+    array[]::text[],
+    'check timer.oneshot_message_progress table triggers'
 );
 
 select hasnt_pk(
